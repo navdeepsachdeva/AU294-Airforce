@@ -1,0 +1,22 @@
+- name: Cron Job Demo
+  hosts: servera*
+  gather_facts: false
+  become: false
+  remote_user: devops
+  tasks:
+    - name: Remove tempuser
+      ansible.posix.at:
+        command: userdel -r tempuser
+        count: 20
+        units: minutes
+        unique: true
+    - name: Schedule backups for my home directory
+      ansible.builtin.cron:
+        name: Backup my home directory
+        user: devops
+        job: /home/devops/bin/backup-home-dir
+        minute: 0
+        hour: 16
+        weekday: 5
+    - name: Reboot now
+      ansible.builtin.reboot:

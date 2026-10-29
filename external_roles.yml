@@ -21,22 +21,34 @@
 
 
   roles:
-    - role: navdeepsachdeva.windows_iis
-    - role: cisco.catalystwan.health_checks
-    - role: community.mongodb.mongodb_mongos
+    # - role: navdeepsachdeva.windows_iis
+    # - role: cisco.catalystwan.health_checks
+    # - role: community.mongodb.mongodb_mongos
     - role: redhat.rhel_system_roles.timesync
     - role: redhat.rhel_system_roles.selinux
 
   tasks:
-    - name: Generate CSR for device
-      cisco.catalystwan.devices_certificates:
-        device_ip: "192.168.1.1"
-        generate_csr: true
+    # - name: Generate CSR for device
+    #   cisco.catalystwan.devices_certificates:
+    #     device_ip: "192.168.1.1"
+    #     generate_csr: true
 
     - name: Run a Role 1
       ansible.builtin.import_role:
         name: student.bash_env
 
-    - name: Run a Role 2
+    # - name: Run a Role 2
+    #   ansible.builtin.import_role:
+    #     name: geerlingguy.php
+
+    - name: Include the storage role from the RHEL ROLES
       ansible.builtin.import_role:
-        name: geerlingguy.php
+        name: redhat.rhel_system_roles.storage
+      vars:
+        storage_volumes:
+          - name: extra
+            type: disk
+            disks:
+              - vdg
+            fs_type: xfs
+            mount_point: /opt/extra
