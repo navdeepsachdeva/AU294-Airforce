@@ -1,0 +1,48 @@
+- name: Server Configuration Play
+  hosts: servera*
+  gather_facts: false
+  become: true
+  remote_user: devops
+  tasks:
+
+    - name: Install Package
+      ansible.builtin.dnf:
+        name: httpd
+        state: present
+
+    - name: Deploy Web Page
+      ansible.builtin.copy:
+        content: 'First Index Page'
+        dest: /var/www/html/index.html
+        mode: "0644"
+
+    - name: Start Web Service
+      ansible.builtin.systemd_service:
+        name: httpd
+        state: started
+        enabled: true
+
+    - name: Open Firewall Web Port
+      ansible.posix.firewalld:
+        service: http
+        state: enabled
+        permanent: true
+        immediate: true
+
+- name: Server Test Play
+  hosts: workstation*
+  gather_facts: false
+  become: false
+  remote_user: student
+  connection: local
+  tasks:
+    - name: Access the Page
+      ansible.builtin.uri:
+        url: http://servera.lab.example.com
+        return_content: true
+      register: captured
+
+    - name: Print Previous task Output
+      ansible.builtin.debug:
+        var: captured['content']
+        # var: captured.content

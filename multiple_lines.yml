@@ -1,0 +1,26 @@
+- name: Multiple Lines Demo
+  hosts: servera*
+  gather_facts: false
+  tasks:
+    - name: Print Text 1
+      ansible.builtin.copy:
+        dest: /tmp/f1
+        content: CryptographyDeprecationWarning TripleDES has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES and will be removed from cryptography.hazmat.primitives.ciphers.algorithms in 48.0.0
+
+    - name: Print Text 2 Replace New line with space
+      ansible.builtin.copy:
+        dest: /tmp/f2
+        content: >
+          CryptographyDeprecationWarning TripleDES has been moved to
+          cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES
+          and will be removed from
+          cryptography.hazmat.primitives.ciphers.algorithms in 48.0.0
+
+    - name: Print Text 3 Keep the Format
+      ansible.builtin.copy:
+        dest: /tmp/f3
+        content: |
+          CryptographyDeprecationWarning TripleDES has been moved to
+          cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES
+          and will be removed from
+          cryptography.hazmat.primitives.ciphers.algorithms in 48.0.0

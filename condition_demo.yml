@@ -1,0 +1,62 @@
+- name: Facts Demo
+  hosts: servera*
+  gather_facts: true
+  vars:
+    distro:
+      - Fedora
+      - Ubuntu
+      - Kali
+      - RedHat
+  vars_files:
+    - vars/outside_vars.yml
+  tasks:
+
+    - name: Install Package
+      ansible.builtin.dnf:
+        name: httpd
+        state: present
+      register: captured
+
+    - name: Print Output
+      ansible.builtin.debug:
+        var: captured
+
+    - name: Store the Facts
+      ansible.builtin.copy:
+        dest: /tmp/{{ inventory_hostname }}.txt
+        content: |
+          Architecture  = {{ ansible_facts['architecture'] }}
+          Date          = {{ ansible_facts['date_time']['date'] }}
+          IP Address    = {{ ansible_facts['default_ipv4']['address'] }}
+          OS            = {{ ansible_facts['distribution'] }}
+          FQDN          = {{ ansible_facts['fqdn'] }}
+          Hostname      = {{ ansible_facts['hostname'] }}
+          Free Memory   = {{ ansible_facts['memory_mb']['real']['free'] }}
+          Total Memory  = {{ ansible_facts['memory_mb']['real']['total'] }}
+          Python Ver    = {{ ansible_facts['python_version'] }}
+
+    - name: Start Web Service
+      ansible.builtin.systemd_service:
+        name: httpd
+        state: restarted
+        enabled: true
+      when:
+        - ansible_facts['memory_mb']['real']['free'] > 500
+        - captured.changed ==true or ansible_facts['architecture'] == "x86_64"
+        - ansible_facts['distribution'] in distro
+        - meme_var is not defined
+      # when: ansible_facts['memory_mb']['real']['free'] > 1000 and captured.changed ==true
+
+    - name: Condition on loop item
+      ansible.builtin.debug:
+        msg: "User {{ item }} is Qualified"
+      loop: "{{ simple_list }}"
+      when: item in qualified_users
+      # when: item == "jarris"
+      vars:
+        qualified_users:
+          - jarris
+          - robertB
+
+      
+

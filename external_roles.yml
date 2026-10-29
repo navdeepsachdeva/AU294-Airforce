@@ -1,0 +1,42 @@
+- name: Use Roles from External Sources
+  hosts: servera*
+  gather_facts: false
+  vars:
+    timesync_ntp_servers:
+      - hostname: foo.example.com
+        iburst: true
+      - hostname: bar.example.com
+        iburst: true
+      - hostname: baz.example.com
+        iburst: true
+    selinux_booleans:
+      - name: 'httpd_enable_homedirs'
+        state: 'on'
+        persistent: 'yes'
+    selinux_ports:
+      - ports: '82'
+        setype: 'http_port_t'
+        proto: 'tcp'
+        state: 'present'
+
+
+  roles:
+    - role: navdeepsachdeva.windows_iis
+    - role: cisco.catalystwan.health_checks
+    - role: community.mongodb.mongodb_mongos
+    - role: redhat.rhel_system_roles.timesync
+    - role: redhat.rhel_system_roles.selinux
+
+  tasks:
+    - name: Generate CSR for device
+      cisco.catalystwan.devices_certificates:
+        device_ip: "192.168.1.1"
+        generate_csr: true
+
+    - name: Run a Role 1
+      ansible.builtin.import_role:
+        name: student.bash_env
+
+    - name: Run a Role 2
+      ansible.builtin.import_role:
+        name: geerlingguy.php

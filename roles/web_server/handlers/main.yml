@@ -1,0 +1,16 @@
+---
+# handlers file for web_server
+
+- name: App Deployed
+  ansible.builtin.debug:
+    msg: "App Deployed in {{ web_server_webpath }}"
+
+- name: Package Installed
+  ansible.builtin.debug:
+    msg: "Package {{ web_server_package }} Installed Success"
+
+- name: Restart Web Service
+  ansible.builtin.systemd_service:
+    name: "{{ web_server_service }}"
+    state: "{{ web_server_service_status }}"
+    enabled: true

@@ -1,0 +1,46 @@
+- name: failed_when/ fail module/ assert module Demo
+  hosts: servera*
+  gather_facts: true
+  become: true
+  remote_user: devops
+  tasks:
+    - name: Install Package
+      ansible.builtin.dnf:
+        name: httpd
+        state: present
+      register: captured
+      # failed_when: captured['changed'] == false
+      # failed_when: not captured['changed'] == false
+      # ok -> fatal because output was NOT on Expected Lines
+
+    # - name: Fail Play via fail module
+    #   ansible.builtin.fail:
+    #     msg: "PHP Packages not Updated"
+    #   when: captured['changed'] == false
+
+    - name: Fail/Continue Play via assert module
+      ansible.builtin.assert:
+        that:
+          - captured['changed'] == true
+          - ansible_facts['architecture'] == "x86_64"
+        fail_msg: "PHP Packages not Updated"
+        success_msg: "Hurray PHP Patched"
+
+    - name: Deploy Web Page
+      ansible.builtin.copy:
+        content: 'First Index Page'
+        dest: /var/www/html/index.html
+        mode: "0644"
+
+    - name: Start Web Service
+      ansible.builtin.systemd_service:
+        name: httpd
+        state: started
+        enabled: true
+
+    - name: Open Firewall Web Port
+      ansible.posix.firewalld:
+        service: http
+        state: enabled
+        permanent: true
+        immediate: true

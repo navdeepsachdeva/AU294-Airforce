@@ -1,0 +1,13 @@
+- name: Convert Ad-Hoc to Play
+  hosts: servera.lab.example.com
+  gather_facts: false
+  tasks:
+    - name: Install Package
+      ansible.builtin.dnf:
+        name: httpd
+        state: present
+
+    - name: Create File 1
+      ansible.builtin.copy:
+        content: 'HELLO CLASS Day 1 - MMMM'
+        dest: /etc/f1

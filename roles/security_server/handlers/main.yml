@@ -1,0 +1,17 @@
+---
+# handlers file for security_server
+
+    - name: Restart Firewalld Service
+      ansible.builtin.systemd_service:
+        name: "{{ security_server_service }}"
+        state: restarted
+        enabled: true
+
+
+    - name: Security Package Installed
+      ansible.builtin.debug:
+        msg: "Security Package {{ security_server_package }} Installed Success"
+
+    - name: Inform Client about Security
+      ansible.builtin.debug:
+        msg: "Send Email to Stakeholders"

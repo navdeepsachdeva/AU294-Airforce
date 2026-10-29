@@ -1,0 +1,33 @@
+- name: Template Demo
+  hosts:
+    - all
+  gather_facts: true
+  become: true
+  remote_user: devops
+  tasks:
+    # - name: Install Package
+    #   ansible.builtin.dnf:
+    #     name: httpd
+    #     state: present
+
+
+    - name: Store Systems Info on Control Node
+      ansible.builtin.template:
+        src: templates/complex.j2
+        dest: ./host_info/infra.html
+        mode: "0644"
+      delegate_to: workstation.lab.example.com
+
+
+    # - name: Start Web Service
+    #   ansible.builtin.systemd_service:
+    #     name: httpd
+    #     state: started
+    #     enabled: true
+
+    # - name: Open Firewall Web Port
+    #   ansible.posix.firewalld:
+    #     service: http
+    #     state: enabled
+    #     permanent: true
+    #     immediate: true

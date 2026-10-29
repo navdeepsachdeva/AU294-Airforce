@@ -1,0 +1,35 @@
+- name: Template Demo
+  hosts: servera*
+  gather_facts: true
+  become: true
+  remote_user: devops
+  tasks:
+    - name: Install Package
+      ansible.builtin.dnf:
+        name: httpd
+        state: present
+
+    - name: Deploy Web Page
+      ansible.builtin.copy:
+        content: 'First Index Page'
+        dest: /var/www/html/index.html
+        mode: "0644"
+
+    - name: Deploy SYstem Info Page
+      ansible.builtin.template:
+        src: templates/simple.j2
+        dest: /var/www/html/{{ ansible_facts['hostname'] }}.html
+        mode: "0644"
+
+    - name: Start Web Service
+      ansible.builtin.systemd_service:
+        name: httpd
+        state: started
+        enabled: true
+
+    - name: Open Firewall Web Port
+      ansible.posix.firewalld:
+        service: http
+        state: enabled
+        permanent: true
+        immediate: true

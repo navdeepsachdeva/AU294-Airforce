@@ -1,0 +1,35 @@
+- name: Ignore Errors Demo
+  hosts: servera*
+  gather_facts: false
+  become: true
+  remote_user: devops
+  tasks:
+    - name: Install Non Exist Package
+      ansible.builtin.dnf:
+        name: meme
+        state: present
+      ignore_errors: true
+
+    - name: Install Package
+      ansible.builtin.dnf:
+        name: httpd
+        state: present
+
+    - name: Deploy Web Page
+      ansible.builtin.copy:
+        content: 'First Index Page'
+        dest: /var/www/html/index.html
+        mode: "0644"
+
+    - name: Start Web Service
+      ansible.builtin.systemd_service:
+        name: httpd
+        state: started
+        enabled: true
+
+    - name: Open Firewall Web Port
+      ansible.posix.firewalld:
+        service: http
+        state: enabled
+        permanent: true
+        immediate: true

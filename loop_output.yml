@@ -1,0 +1,16 @@
+- name: loop on output list
+  hosts: servera*
+  gather_facts: false
+  tasks:
+    - name: Execute command via command module
+      ansible.builtin.command: "{{ item }}"
+      register: captured
+      loop:
+        - whoami
+        - tail -2 /etc/passwd
+        - hostname
+
+    - name: Print Output
+      ansible.builtin.debug:
+        msg: "{{ item.item  }} == {{ item['stdout'] }}"
+      loop: "{{ captured['results'] }}"

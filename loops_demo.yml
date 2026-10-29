@@ -1,0 +1,37 @@
+- name: Loops Demo
+  hosts: servera*
+  gather_facts: false
+  vars_files:
+    - vars/outside_vars.yml
+
+  # loops was introduced in Ansible 2.5
+  # loop needs list/array
+  tasks:
+    - name: Print Simple List
+      ansible.builtin.debug:
+        msg: "{{ item }}"
+      # with_items: "{{ simple_list }}"
+      loop: "{{ simple_list }}"
+
+    - name: Print Complex List
+      ansible.builtin.debug:
+        msg: "{{ item.fn }} ++ {{ item['uid'] }}"
+      # with_list: "{{ complex_list }}"
+      loop: "{{ complex_list }}"
+
+
+    - name: Create users with List
+      ansible.builtin.user:
+        name: "{{ item.fn }}"
+        uid: "{{ item['uid'] }}"
+        comment: "User {{ item.fn }} -- {{ item.ln }}"
+      # with_list: "{{ complex_list }}"
+      loop: "{{ complex_list }}"
+
+    - name: Print User Dict
+      ansible.builtin.debug:
+        # msg: "{{ user_dict | dict2items }}"
+        msg: "{{ item['key'] }} // {{ item['value'] }}"
+      loop: "{{ user_dict | dict2items }}"
+      # with_dict: "{{ user_dict }}"
+

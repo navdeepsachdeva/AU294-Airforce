@@ -1,0 +1,47 @@
+- name: Variable Demo
+  hosts: dev,prod
+  # hosts: 'db,dev,!*.na.example.com'
+  gather_facts: false
+  # Level 12 NOT Recommended
+  vars:
+    floor: "Level 12 Play vars"
+
+  # Level 13 Development Only not Production
+  # Level 13 Play vars_prompt
+  vars_prompt:
+    - name: floor
+      prompt: "What is your Floor Number ?"
+      private: false
+
+  vars_files:
+    - ./vars/outside_vars.yml
+
+  tasks:
+    - name: Print Users Values
+      ansible.builtin.debug:
+        msg: "{{ some }}"
+        # msg: "{{ myusers.drew.first_name }} // {{ myusers['jarris']['first_name'] }} {{ simple_list[4] }}"
+
+    - name: "Outside Block Print the Variable - Task 1 {{ inventory_hostname }}"
+      ansible.builtin.debug:
+        msg: "{{ inventory_hostname }} == {{ floor }}"
+      
+    - name: Block of Tasks
+      block:
+        - name: Inside Block Print the Variable - Task 2
+          ansible.builtin.debug:
+            msg: "{{ inventory_hostname }} == {{ floor }}"
+          vars:
+            floor: "Level 17 Task vars (for the task only)"
+
+        - name: Inside Block Print the Variable - Task 3
+          ansible.builtin.debug:
+            msg: "{{ inventory_hostname }} == {{ floor }}"
+      vars:
+        floor: "Level 16 Block vars (for tasks in block only)"
+
+    - name: Outside Block Print the Variable - Task 1
+      ansible.builtin.debug:
+        msg: "{{ inventory_hostname }} == {{ floor }}"
+
+# ansible-navigator run variable_demo.yml --limit=servera* --extra-vars='floor="Level 22 GOD LEVEL GLOBAL SCOPE"'

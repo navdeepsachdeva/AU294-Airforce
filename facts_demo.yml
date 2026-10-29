@@ -1,0 +1,53 @@
+- name: Facts Demo
+  hosts: server*
+  gather_facts: false
+  tasks:
+    - name: Collect Custom Facts Manually
+      ansible.builtin.setup:
+        gather_subset:
+          - '!all'
+          - 'min'
+          - 'network'
+          - 'hardware'
+    - name: Create Folder on Workstation
+      ansible.builtin.file:
+        path: ./host_info
+        state: directory
+        mode: "0755"
+      delegate_to: workstation.lab.example.com
+      vars:
+        ansible_connection: local
+
+    - name: Store the Facts
+      ansible.builtin.copy:
+        dest: ./host_info/{{ inventory_hostname }}.txt
+        content: |
+          Architecture  = {{ ansible_architecture }}
+          Architecture  = {{ ansible_facts.architecture }}
+          Architecture  = {{ ansible_facts['architecture'] }}
+          Date          = {{ ansible_facts['date_time']['date'] }}
+          Time          = {{ ansible_facts['date_time']['time'] }}
+          IP Address    = {{ ansible_facts['default_ipv4']['address'] }}
+          SDA Size      = {{ ansible_facts['devices']['sda']['size'] }}
+          SDB Size      = {{ ansible_facts['devices']['sdb']['size'] | default('Not Available') }}
+          OS            = {{ ansible_facts['distribution'] }}
+          OS Version    = {{ ansible_facts['distribution_version'] }}
+          FQDN          = {{ ansible_facts['fqdn'] }}
+          Hostname      = {{ ansible_facts['hostname'] }}
+          Kernel        = {{ ansible_facts['kernel'] }}
+          Free Memory   = {{ ansible_facts['memory_mb']['real']['free'] }}
+          Total Memory  = {{ ansible_facts['memory_mb']['real']['total'] }}
+          Python Ver    = {{ ansible_facts['python_version'] }}
+          User Name     = {{ ansible_facts['ansible_local']['laptop']['user']['name'] | default('Not Available') }}
+          User Dept     = {{ ansible_facts['ansible_local']['laptop']['dept']['name'] | default('Not Available') }}
+          Dept Location = {{ ansible_facts['ansible_local']['laptop']['dept']['location'] | default('Not Available') }}
+      delegate_to: workstation*
+      vars:
+        ansible_connection: local
+
+    - name: Install Package
+      ansible.builtin.dnf:
+        name: httpd
+        state: present
+      when: ( ansible_facts['ansible_local']['laptop']['dept']['location'] | default('Not Available'))  == "oklahoma"
+      # when: ansible_facts['memory_mb']['real']['free'] > 1000

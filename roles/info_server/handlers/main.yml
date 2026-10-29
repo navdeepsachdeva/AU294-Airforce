@@ -1,0 +1,6 @@
+---
+# handlers file for info_server
+
+- name: Hardware Info Stored
+  ansible.builtin.debug:
+    msg: "Hardware Info Stored Success"

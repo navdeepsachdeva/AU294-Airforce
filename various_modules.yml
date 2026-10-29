@@ -1,0 +1,29 @@
+- name: Various Modules
+  hosts: servera*
+  gather_facts: false
+  tasks:
+    - name: Fetch /var/log/secure file
+      ansible.builtin.fetch:
+        src: "{{ item }}"
+        dest: collected_logs/
+      loop:
+        - /var/log/secure
+        - /var/log/messages
+
+    - name: Add Line to /etc/hosts
+      ansible.builtin.lineinfile:
+        path: /etc/hosts
+        line: '192.168.1.50 decomhost'
+        state: present
+
+    - name: Configure Apache with a virtual host
+      ansible.builtin.blockinfile:
+        path: /etc/httpd/conf/httpd.conf
+        block: |
+          <VirtualHost *:80>
+          ServerName www.example.com
+          DocumentRoot /var/www/html
+          ErrorLog logs/example-error.log
+          CustomLog logs/example-access.log custom
+          </VirtualHost>
+        state: present

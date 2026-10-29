@@ -1,0 +1,59 @@
+- name: Changed When usecase - run handlers forcefully
+  hosts: servera*
+  gather_facts: false
+  become: true
+  remote_user: devops
+  # force_handlers: true
+  tasks:
+    - name: Open Firewall Web Port
+      ansible.posix.firewalld:
+        service: http
+        state: enabled
+        permanent: true
+        immediate: true
+      changed_when: true
+      # ok -> changed
+      notify:
+        - Inform Client about Security
+
+    - name: Install Package
+      ansible.builtin.dnf:
+        name: httpd
+        state: present
+      changed_when: true
+      # ok -> changed
+      notify:
+        - Package Installed
+        - Start Web Service
+
+    - name: Deploy Web Page
+      ansible.builtin.copy:
+        content: 'First Index Page'
+        dest: /var/www/html/index.html
+        mode: "0644"
+      notify:
+        - Start Web Service
+        - App Deployed
+
+  handlers:
+    - name: Extra
+      ansible.builtin.debug:
+        msg: "No One classed Me"
+
+    - name: App Deployed 
+      ansible.builtin.debug:
+        msg: "App Deployed Success"
+
+    - name: Package Installed
+      ansible.builtin.debug:
+        msg: "Package Installed Success"
+
+    - name: Start Web Service
+      ansible.builtin.systemd_service:
+        name: httpd
+        state: started
+        enabled: true
+
+    - name: Inform Client about Security
+      ansible.builtin.debug:
+        msg: "Send Email to Stakeholders"

@@ -1,0 +1,50 @@
+floor: "Level 14 Play vars_files"
+# some: !vault |
+#           $ANSIBLE_VAULT;1.1;AES256
+#           38306166653536336466663732666665343265633464396163333030343639616561653566346135
+#           3636666231313233306565393163653264333161656363320a316534366633383965303736343531
+#           61306536643635396339643233386531613935373939666231323561626137373037313761313133
+#           6333613634613364360a333431333934346231373830313830333736656633333838613164383630
+#           3833
+some: nothing
+
+myusers:
+  drew:
+    first_name: Drew
+    last_name: A
+    username: drew
+  jarris:
+    first_name: Jarris
+    last_name: W
+    username: jarris
+
+simple_list:
+  - drew
+  - jarris
+  - robertB
+  - robertP
+
+complex_list:
+  - fn: william 
+    ln: E
+    uid: 1201
+  - fn: russel
+    ln: C
+    uid: 1202
+  - fn: Alex
+    ln: O
+    uid: 1203
+  - fn: brad
+    ln: K
+    uid: 1204
+
+user_dict:
+  drew: A
+  jarris: W
+  robert1: B
+  robert2: P
+
+
+# floor: CHANGE_ME
+# MYSQL_USER: CHANGE_ME
+# MYSQL_PASSWORD: CHANGE_ME

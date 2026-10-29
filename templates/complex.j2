@@ -1,0 +1,61 @@
+<html>
+<head>
+	<title>Information about Hosts</title>
+</head>
+
+<body>
+{% for system in groups["control"] %}
+
+<h1> Control Node {{ hostvars[system].inventory_hostname }} System Hardware Info </h1>
+
+  Curent Host	= {{ system }}
+  Hostname      = {{ hostvars[system]['ansible_facts']['hostname'] }}<br/>
+  FQDN          = {{ hostvars[system]['ansible_facts']['fqdn'] }}<br/>
+  Architecture  = {{ hostvars[system]['ansible_facts']['architecture'] }}<br/>
+  Date          = {{ hostvars[system]['ansible_facts']['date_time']['date'] }}<br/>
+  Time          = {{ hostvars[system]['ansible_facts']['date_time']['time'] }}<br/>
+  IP Address    = {{ hostvars[system]['ansible_facts']['default_ipv4']['address'] | default('Not Available') }}<br/>
+  SDA Size      = {{ hostvars[system]['ansible_facts']['devices']['sda']['size'] }}<br/>
+  SDB Size      = {{ hostvars[system]['ansible_facts']['devices']['sdb']['size'] | default('Not Available') }}<br/>
+  OS            = {{ hostvars[system]['ansible_facts']['distribution'] }}<br/>
+  OS Version    = {{ hostvars[system]['ansible_facts']['distribution_version'] }}<br/>
+  Kernel        = {{ hostvars[system]['ansible_facts']['kernel'] }}<br/>
+  Free Memory   = {{ hostvars[system]['ansible_facts']['memory_mb']['real']['free'] }}<br/>
+  Total Memory  = {{ hostvars[system]['ansible_facts']['memory_mb']['real']['total'] }}<br/>
+  Python Ver    = {{ hostvars[system]['ansible_facts']['python_version'] }}<br/>
+  User Name     = {{ hostvars[system]['ansible_facts']['ansible_local']['laptop']['user']['name'] | default('Not Available') }}<br/>
+  User Dept     = {{ hostvars[system]['ansible_facts']['ansible_local']['laptop']['dept']['name'] | default('Not Available') }}<br/>
+  Dept Location = {{ hostvars[system]['ansible_facts']['ansible_local']['laptop']['dept']['location'] | default('Not Available') }}<br/>
+
+{% endfor %}
+
+{% for system in groups["all"] %}
+
+{% if system not in groups["control"] %}
+
+<h1> Managed Host {{ hostvars[system].inventory_hostname }} System Hardware Info </h1>
+
+  Curent Host	= {{ system }}
+  Hostname      = {{ hostvars[system]['ansible_facts']['hostname'] }}<br/>
+  FQDN          = {{ hostvars[system]['ansible_facts']['fqdn'] }}<br/>
+  Architecture  = {{ hostvars[system]['ansible_facts']['architecture'] }}<br/>
+  Date          = {{ hostvars[system]['ansible_facts']['date_time']['date'] }}<br/>
+  Time          = {{ hostvars[system]['ansible_facts']['date_time']['time'] }}<br/>
+  IP Address    = {{ hostvars[system]['ansible_facts']['default_ipv4']['address'] | default('Not Available') }}<br/>
+  SDA Size      = {{ hostvars[system]['ansible_facts']['devices']['sda']['size'] }}<br/>
+  SDB Size      = {{ hostvars[system]['ansible_facts']['devices']['sdb']['size'] | default('Not Available') }}<br/>
+  OS            = {{ hostvars[system]['ansible_facts']['distribution'] }}<br/>
+  OS Version    = {{ hostvars[system]['ansible_facts']['distribution_version'] }}<br/>
+  Kernel        = {{ hostvars[system]['ansible_facts']['kernel'] }}<br/>
+  Free Memory   = {{ hostvars[system]['ansible_facts']['memory_mb']['real']['free'] }}<br/>
+  Total Memory  = {{ hostvars[system]['ansible_facts']['memory_mb']['real']['total'] }}<br/>
+  Python Ver    = {{ hostvars[system]['ansible_facts']['python_version'] }}<br/>
+  User Name     = {{ hostvars[system]['ansible_facts']['ansible_local']['laptop']['user']['name'] | default('Not Available') }}<br/>
+  User Dept     = {{ hostvars[system]['ansible_facts']['ansible_local']['laptop']['dept']['name'] | default('Not Available') }}<br/>
+  Dept Location = {{ hostvars[system]['ansible_facts']['ansible_local']['laptop']['dept']['location'] | default('Not Available') }}<br/>
+
+{% endif %}
+{% endfor %}
+
+</body>
+</html>

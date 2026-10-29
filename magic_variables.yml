@@ -1,0 +1,14 @@
+- name: Variable Demo
+  hosts: all
+  gather_facts: false
+
+  vars_files:
+    - ./vars/outside_vars.yml
+
+  tasks:
+    - name: Print Users Values
+      ansible.builtin.debug:
+        msg: "{{ inventory_hostname }} == {{ floor }}"
+      when: inventory_hostname in groups["prod"]
+      # when: inventory_hostname == "serverb.lab.example.com"
+      

@@ -1,0 +1,9 @@
+Architecture  = x86_64
+Date          = 2026-10-29
+Time          = 14:36:11
+IP Address    = 172.25.250.10
+SDA Size      = 10.00 GB
+OS            = RedHat
+FQDN          = servera.lab.example.com
+Free Memory   = 999
+Total Memory  = 1705

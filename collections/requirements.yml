@@ -1,0 +1,7 @@
+collections:
+  - name: community.mongodb
+    version: 1.8.0
+    
+  - name: cisco.catalystwan
+
+  - name: /home/student/roles-collections/redhat-rhel_system_roles-1.108.6.tar.gz

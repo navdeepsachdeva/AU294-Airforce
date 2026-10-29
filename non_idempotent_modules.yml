@@ -1,0 +1,12 @@
+- name: Non Idempotent Modules Avoid if Possible
+  hosts: servera*
+  gather_facts: false
+  tasks:
+    - name: Execute command via command module
+      ansible.builtin.command: whoami
+
+    - name: Execute command via shell module
+      ansible.builtin.shell: tail -2 /etc/passwd
+
+    - name: Install Python bypassing Ansible Module System
+      ansible.builtin.raw: dnf install -y python3

@@ -1,0 +1,37 @@
+- name: My First Playbook
+  hosts: servera*
+  gather_facts: false
+  become: true
+  tasks:
+
+    - name: Create a Group
+      ansible.builtin.group:
+        name: developers
+        state: present
+        gid: 1050
+
+    - name: Create a User
+      ansible.builtin.user:
+        name: brad
+        comment: Brad K
+        uid: 1100
+        groups: developers
+    - name: Modify sudo to allow the developers group sudo without a password
+      ansible.builtin.lineinfile:
+        path: /etc/sudoers.d/developers
+        state: present
+        create: true
+        mode: "0440"
+        line: "%developers ALL=(ALL) NOPASSWD: ALL"
+        validate: /usr/sbin/visudo -cf %s
+
+    - name: Install Package
+      ansible.builtin.dnf:
+        name: httpd
+        state: present
+
+    - name: Start Web Service
+      ansible.builtin.systemd_service:
+        name: httpd
+        state: started
+        enabled: true

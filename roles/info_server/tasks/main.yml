@@ -1,0 +1,11 @@
+---
+# tasks file for info_server
+
+- name: Deploy System Info Page
+  ansible.builtin.template:
+    src: simple.j2
+    dest: /var/www/html/{{ ansible_facts['hostname'] }}.html
+    mode: "0644"
+  notify:
+    - Hardware Info Stored
+

@@ -1,0 +1,29 @@
+<html>
+<head>
+	<title>Information about Hosts</title>
+</head>
+
+<body>
+
+<h1>System Info About {{ inventory_hostname }}</h1>
+
+  Architecture  = {{ ansible_facts['architecture'] }}<br/>
+  Date          = {{ ansible_facts['date_time']['date'] }}<br/>
+  Time          = {{ ansible_facts['date_time']['time'] }}<br/>
+  IP Address    = {{ ansible_facts['default_ipv4']['address'] }}<br/>
+  SDA Size      = {{ ansible_facts['devices']['sda']['size'] }}<br/>
+  SDB Size      = {{ ansible_facts['devices']['sdb']['size'] | default('Not Available') }}<br/>
+  OS            = {{ ansible_facts['distribution'] }}<br/>
+  OS Version    = {{ ansible_facts['distribution_version'] }}<br/>
+  FQDN          = {{ ansible_facts['fqdn'] }}<br/>
+  Hostname      = {{ ansible_facts['hostname'] }}<br/>
+  Kernel        = {{ ansible_facts['kernel'] }}<br/>
+  Free Memory   = {{ ansible_facts['memory_mb']['real']['free'] }}<br/>
+  Total Memory  = {{ ansible_facts['memory_mb']['real']['total'] }}<br/>
+  Python Ver    = {{ ansible_facts['python_version'] }}<br/>
+  User Name     = {{ ansible_facts['ansible_local']['laptop']['user']['name'] | default('Not Available') }}<br/>
+  User Dept     = {{ ansible_facts['ansible_local']['laptop']['dept']['name'] | default('Not Available') }}<br/>
+  Dept Location = {{ ansible_facts['ansible_local']['laptop']['dept']['location'] | default('Not Available') }}<br/>
+
+</body>
+</html>

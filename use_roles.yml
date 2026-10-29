@@ -1,0 +1,101 @@
+- name: Roles Demo
+  hosts: servera*
+  gather_facts: false
+
+  pre_tasks:
+    - name: Pre Tasks - Collect Custom Facts Manually
+      ansible.builtin.setup:
+        gather_subset:
+          - '!all'
+          - 'min'
+          - 'network'
+          - 'hardware'
+
+    - name: Pre Tasks - Create Folder on Workstation
+      ansible.builtin.file:
+        path: ./host_info
+        state: directory
+        mode: "0755"
+      delegate_to: workstation.lab.example.com
+      vars:
+        ansible_connection: local
+ 
+    - name: Pre Tasks - Store the Facts
+      ansible.builtin.copy:
+        dest: ./host_info/{{ inventory_hostname }}.txt
+        content: |
+          Architecture  = {{ ansible_facts['architecture'] }}
+          Date          = {{ ansible_facts['date_time']['date'] }}
+          Time          = {{ ansible_facts['date_time']['time'] }}
+          IP Address    = {{ ansible_facts['default_ipv4']['address'] }}
+          SDA Size      = {{ ansible_facts['devices']['sda']['size'] }}
+          OS            = {{ ansible_facts['distribution'] }}
+          FQDN          = {{ ansible_facts['fqdn'] }}
+          Free Memory   = {{ ansible_facts['memory_mb']['real']['free'] }}
+          Total Memory  = {{ ansible_facts['memory_mb']['real']['total'] }}
+      delegate_to: workstation.lab.example.com
+      notify:
+        - Control Node Info
+
+    - name: Pre Tasks - Inform Customer
+      ansible.builtin.command: sleep 2
+      notify:
+        - services_down
+
+
+  roles:
+    # Static Roles
+    # - role: security_server
+    - role: web_server
+      web_server_content: "Play Level"
+
+  tasks:
+    - name: Play Tasks - Custom Task 1
+      ansible.builtin.command: sleep 2
+      notify:
+        - Custom_Handler1
+
+    - name: Call Role based on Condition
+      ansible.builtin.import_role:
+      # ansible.builtin.include_role:
+        name: info_server
+      when: meme is not defined
+
+
+
+  post_tasks:
+    - name: Post Tasks - Access the Page
+      ansible.builtin.uri:
+        url: http://servera.lab.example.com
+        return_content: true
+      delegate_to: workstation.lab.example.com
+      register: captured
+ 
+    - name: Post Tasks - Print Previous task Output
+      ansible.builtin.debug:
+        var: captured['content']
+      delegate_to: workstation.lab.example.com
+
+    - name: Post Tasks - Inform Customer
+      ansible.builtin.command: sleep 2
+      notify:
+        - services_up
+
+
+
+  handlers:
+    - name: Custom_Handler1
+      ansible.builtin.debug:
+        msg: "Play - Extra Handler"
+
+    - name: Control Node Info
+      ansible.builtin.debug:
+        msg: "Pre Handler Info STored on Control Node"
+
+    - name: services_up
+      ansible.builtin.debug:
+        msg: "Instagram Up Start Wasting Time"
+
+    - name: services_down
+      ansible.builtin.debug:
+        msg: "Instagram Down Go and Sleep"

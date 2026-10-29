@@ -1,0 +1,28 @@
+- name: Import Multiple Lines Playbook
+  ansible.builtin.import_playbook: multiple_lines.yml
+
+
+- name: Large Integration Play Demo
+  hosts: servera*
+  gather_facts: false
+  tasks:
+    - name: Static Import an external Task File
+      ansible.builtin.import_tasks:
+        file: tasks/external_oracle.yml
+      when: youme is not defined
+
+    - name: Dynamic Include an external Task File
+      ansible.builtin.include_tasks:
+        file: tasks/external_ldap.yml
+      when: youme is not defined
+
+    # - name: Loop on Extneral Task Files Include Only
+    #   ansible.builtin.include_tasks:
+    #   # ansible.builtin.import_tasks:
+    #     file: "{{ item }}"
+    #   loop:
+    #     - tasks/external_oracle.yml
+    #     - tasks/external_ldap.yml
+
+- name: Import Multiple Play's Playbook
+  ansible.builtin.import_playbook: multiple_play.yml
